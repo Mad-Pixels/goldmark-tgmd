@@ -1,4 +1,4 @@
-module github.com/Mad-Pixels/goldmark_tgmd
+module github.com/Mad-Pixels/goldmark-tgmd
 
 go 1.22.0
 
