@@ -1,92 +1,75 @@
 package tgmd
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/renderer"
 	"github.com/yuin/goldmark/util"
 )
 
-type Option interface {
-	SetOption(*Config)
-}
-
-type Config struct{}
-
-func (r Config) SetOption(c *Config) { *c = r }
-
 type Renderer struct {
-	Config Config
+	Config *config
 }
 
-func NewRenderer(opts ...Option) renderer.NodeRenderer {
-	r := &Renderer{
-		Config: Config{},
+func NewRenderer(c *config) renderer.NodeRenderer {
+	return &Renderer{
+		Config: c,
 	}
-	for _, opt := range opts {
-		opt.SetOption(&r.Config)
-	}
-	return r
 }
 
 func (r *Renderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
-	reg.Register(ast.KindHeading, r.renderHeading)
-
-	//
 	reg.Register(ast.KindText, r.renderText)
-	reg.Register(ast.KindLink, r.renderLink)
+
+	reg.Register(ast.KindHeading, r.renderHeading)
 	reg.Register(ast.KindEmphasis, r.emphasis)
+	reg.Register(ast.KindLink, r.renderLink)
 }
 
-func (r *Renderer) emphasis(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
-	n := node.(*ast.Emphasis)
-	if n.Level == 2 {
-		_, _ = w.WriteString(textBold)
-	}
-	if n.Level == 1 {
-		_, _ = w.WriteString(textItalics)
-	}
-	return ast.WalkContinue, nil
-}
-
-func (r *Renderer) renderLink(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
-	n := node.(*ast.Link)
-	if entering {
-		_, _ = w.WriteString("[")
-	} else {
-		_, _ = w.WriteString(fmt.Sprintf("](%s)", string(n.Destination)))
-	}
-
-	return ast.WalkContinue, nil
-}
-
-func (r *Renderer) renderHeading(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
-	if entering {
-		_, _ = w.WriteString(textBold)
-	} else {
-		_, _ = w.WriteString(textBold + "\n")
-	}
-	return ast.WalkContinue, nil
-}
-
-func (r *Renderer) renderText(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
+func (r *Renderer) renderText(w util.BufWriter, source []byte, node ast.Node, entering bool) (
+	ast.WalkStatus, error,
+) {
 	if !entering {
 		return ast.WalkContinue, nil
 	}
 	n := node.(*ast.Text)
-	segment := n.Segment.Value(source)
+	render(w, n.Segment.Value(source))
+	return ast.WalkContinue, nil
+}
 
-	var escapedText strings.Builder
-	for _, runeValue := range segment {
-		switch runeValue {
-		case '_', '*', '[', ']', '(', ')', '#', '+', '-', '=', '{', '}', '.', '!', '>', '<':
-			escapedText.WriteString("\\")
-		}
-		escapedText.WriteByte(runeValue)
+func (r *Renderer) renderHeading(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
+	ast.WalkStatus, error,
+) {
+	n := node.(*ast.Heading)
+	if entering {
+		r.Config.headings[n.Level].writeStart(w)
+	} else {
+		r.Config.headings[n.Level].writeEnd(w)
 	}
+	return ast.WalkContinue, nil
+}
 
-	_, _ = w.WriteString(escapedText.String())
+func (r *Renderer) renderLink(w util.BufWriter, source []byte, node ast.Node, entering bool) (
+	ast.WalkStatus, error,
+) {
+	n := node.(*ast.Link)
+	if entering {
+		writeRowBytes(w, []byte{OpenBracket.Byte()})
+	} else {
+		writeRowBytes(w, []byte{CloseBracket.Byte(), OpenParen.Byte()})
+		writeRowBytes(w, n.Destination)
+		writeRowBytes(w, []byte{CloseParen.Byte()})
+	}
+	return ast.WalkContinue, nil
+}
+
+func (r *Renderer) emphasis(w util.BufWriter, source []byte, node ast.Node, entering bool) (
+	ast.WalkStatus, error,
+) {
+	n := node.(*ast.Emphasis)
+	if n.Level == 2 {
+		writeRowBytes(w, Bold.Bytes())
+	}
+	if n.Level == 1 {
+		writeRowBytes(w, Italics.Bytes())
+	}
 	return ast.WalkContinue, nil
 }
