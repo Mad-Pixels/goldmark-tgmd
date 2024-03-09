@@ -8,11 +8,11 @@ import (
 	"github.com/yuin/goldmark/util"
 )
 
-type strikethrough struct {
-}
+type strikethrough struct{}
 
 var Strikethroughs = &strikethrough{}
 
+// Extend ...
 func (e *strikethrough) Extend(m goldmark.Markdown) {
 	m.Parser().AddOptions(parser.WithInlineParsers(
 		util.Prioritized(ext.NewStrikethroughParser(), 500),

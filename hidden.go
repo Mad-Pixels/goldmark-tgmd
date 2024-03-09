@@ -2,69 +2,70 @@ package tgmd
 
 import (
 	"github.com/yuin/goldmark"
-	gast "github.com/yuin/goldmark/ast"
+	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer"
 	"github.com/yuin/goldmark/text"
 	"github.com/yuin/goldmark/util"
 )
 
-type HiddenAst struct {
-	gast.BaseInline
+var KindHidden = ast.NewNodeKind("Hidden")
+
+// HiddenAST abstract semantic tree for "hidden".
+type HiddenAST struct {
+	ast.BaseInline
 }
 
 // Dump implements Node.Dump.
-func (n *HiddenAst) Dump(source []byte, level int) {
-	gast.DumpHelper(n, source, level, nil, nil)
+func (n *HiddenAST) Dump(source []byte, level int) {
+	ast.DumpHelper(n, source, level, nil, nil)
 }
 
-var KindHidden = gast.NewNodeKind("Hidden")
-
 // Kind implements Node.Kind.
-func (n *HiddenAst) Kind() gast.NodeKind {
+func (n *HiddenAST) Kind() ast.NodeKind {
 	return KindHidden
 }
 
-func NewHidden() *HiddenAst {
-	return &HiddenAst{}
+// NewHidden initialize HiddenAST object.
+func NewHidden() *HiddenAST {
+	return &HiddenAST{}
 }
 
-// aaa
-// aaa
-// aaa
-// aaa
-// aaa
-type hiddenDelimiterProcessor struct {
-}
+type hiddenDelimiterProcessor struct{}
 
+// IsDelimiter check incoming byte with object delimiter.
 func (p *hiddenDelimiterProcessor) IsDelimiter(b byte) bool {
-	return b == '|'
+	return b == PipeChar.Byte()
 }
 
+// CanOpenCloser ...
 func (p *hiddenDelimiterProcessor) CanOpenCloser(opener, closer *parser.Delimiter) bool {
 	return opener.Char == closer.Char
 }
 
-func (p *hiddenDelimiterProcessor) OnMatch(consumes int) gast.Node {
+// OnMatch ...
+func (p *hiddenDelimiterProcessor) OnMatch(consumes int) ast.Node {
 	return NewHidden()
 }
 
 var defaultHiddenDelimiterProcessor = &hiddenDelimiterProcessor{}
 
-type hiddenParser struct {
-}
+type hiddenParser struct{}
 
 var defaultHiddenParser = &hiddenParser{}
 
+// NewHiddenParser initialize parser.InlineParser.
 func NewHiddenParser() parser.InlineParser {
 	return defaultHiddenParser
 }
 
+// Trigger char for parser.
 func (s *hiddenParser) Trigger() []byte {
-	return []byte{'|'}
+	return []byte{PipeChar.Byte()}
 }
 
-func (s *hiddenParser) Parse(parent gast.Node, block text.Reader, pc parser.Context) gast.Node {
+// Parse source.
+func (s *hiddenParser) Parse(parent ast.Node, block text.Reader, pc parser.Context) ast.Node {
 	before := block.PrecendingCharacter()
 	line, segment := block.PeekLine()
 	node := parser.ScanDelimiter(line, before, 2, defaultHiddenDelimiterProcessor)
@@ -77,15 +78,16 @@ func (s *hiddenParser) Parse(parent gast.Node, block text.Reader, pc parser.Cont
 	return node
 }
 
-func (s *hiddenParser) CloseBlock(parent gast.Node, pc parser.Context) {
+// CloseBlock ...
+func (s *hiddenParser) CloseBlock(parent ast.Node, pc parser.Context) {
 	// nothing to do
 }
 
-type hidden struct {
-}
+type hidden struct{}
 
 var Hidden = &hidden{}
 
+// Extend ...
 func (e *hidden) Extend(m goldmark.Markdown) {
 	m.Parser().AddOptions(parser.WithInlineParsers(
 		util.Prioritized(NewHiddenParser(), 500),

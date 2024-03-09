@@ -7,39 +7,39 @@ type config struct {
 	listBullets [3]rune
 }
 
-// NewConfig for generate Tg styles.
+// NewConfig for generate styles.
 func NewConfig() *config {
 	return &config{
 		headings: [6]Element{
 			{
-				Style:  Bold,
+				Style:  BoldTg,
 				Prefix: "# ",
 			},
 			{
-				Style:  Bold,
+				Style:  BoldTg,
 				Prefix: "",
 			},
 			{
-				Style:  Italics,
+				Style:  ItalicsTg,
 				Prefix: "# ",
 			},
 			{
-				Style:  Italics,
+				Style:  ItalicsTg,
 				Prefix: "",
 			},
 			{
-				Style:  Italics,
+				Style:  ItalicsTg,
 				Prefix: "~",
 			},
 			{
-				Style:  Italics,
+				Style:  ItalicsTg,
 				Prefix: "",
 			},
 		},
 		listBullets: [3]rune{
-			SymbolCircle.Rune(),
-			SymbolSquare.Rune(),
-			SymbolTriangle.Rune(),
+			CircleSymbol.Rune(),
+			SquareSymbol.Rune(),
+			TriangleSymbol.Rune(),
 		},
 	}
 }

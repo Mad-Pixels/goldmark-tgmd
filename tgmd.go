@@ -1,7 +1,7 @@
 package tgmd
 
 import (
-	"strings"
+	"bytes"
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
@@ -11,16 +11,7 @@ import (
 	"github.com/yuin/goldmark/util"
 )
 
-type Renderer struct {
-	Config *config
-}
-
-func NewRenderer(c *config) renderer.NodeRenderer {
-	return &Renderer{
-		Config: c,
-	}
-}
-
+// TGMD (telegramMarkdown) endpoint.
 func TGMD(c *config) goldmark.Markdown {
 	return goldmark.New(
 		goldmark.WithRenderer(
@@ -33,20 +24,33 @@ func TGMD(c *config) goldmark.Markdown {
 	)
 }
 
+// Renderer implement renderer.NodeRenderer object.
+type Renderer struct {
+	Config *config
+}
+
+// NewRenderer initialize Renderer as renderer.NodeRenderer.
+func NewRenderer(c *config) renderer.NodeRenderer {
+	return &Renderer{
+		Config: c,
+	}
+}
+
+// RegisterFuncs add AST objects to Renderer.
 func (r *Renderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindText, r.renderText)
 
-	reg.Register(ast.KindFencedCodeBlock, r.code)
-	reg.Register(ast.KindCodeBlock, r.code)
 	reg.Register(ast.KindBlockquote, r.blockquote)
-	reg.Register(ast.KindHeading, r.heading)
+	reg.Register(ast.KindFencedCodeBlock, r.code)
 	reg.Register(ast.KindListItem, r.listItem)
 	reg.Register(ast.KindEmphasis, r.emphasis)
-	reg.Register(ast.KindLink, r.renderLink)
-	reg.Register(ast.KindList, r.list)
 	reg.Register(ast.KindCodeSpan, r.codeSpan)
+	reg.Register(ast.KindLink, r.renderLink)
+	reg.Register(ast.KindHeading, r.heading)
+	reg.Register(ast.KindCodeBlock, r.code)
+	reg.Register(ast.KindList, r.list)
 
-	// re-define.
+	// custom.
 	reg.Register(ext.KindStrikethrough, r.strikethrough)
 	reg.Register(KindHidden, r.hidden)
 }
@@ -79,11 +83,11 @@ func (r *Renderer) renderLink(w util.BufWriter, _ []byte, node ast.Node, enterin
 ) {
 	n := node.(*ast.Link)
 	if entering {
-		writeRowBytes(w, []byte{OpenBracket.Byte()})
+		writeRowBytes(w, []byte{OpenBracketChar.Byte()})
 	} else {
-		writeRowBytes(w, []byte{CloseBracket.Byte(), OpenParen.Byte()})
+		writeRowBytes(w, []byte{CloseBracketChar.Byte(), OpenParenChar.Byte()})
 		writeRowBytes(w, n.Destination)
-		writeRowBytes(w, []byte{CloseParen.Byte()})
+		writeRowBytes(w, []byte{CloseParenChar.Byte()})
 	}
 	return ast.WalkContinue, nil
 }
@@ -93,10 +97,10 @@ func (r *Renderer) emphasis(w util.BufWriter, _ []byte, node ast.Node, entering 
 ) {
 	n := node.(*ast.Emphasis)
 	if n.Level == 2 {
-		writeRowBytes(w, Bold.Bytes())
+		writeRowBytes(w, BoldTg.Bytes())
 	}
 	if n.Level == 1 {
-		writeRowBytes(w, Italics.Bytes())
+		writeRowBytes(w, ItalicsTg.Bytes())
 	}
 	return ast.WalkContinue, nil
 }
@@ -120,20 +124,20 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 	if entering {
 		writeNewLine(w)
 		if n.Parent().Parent().Kind().String() == ast.KindDocument.String() {
-			writeRowBytes(w, []byte{Space.Byte(), Space.Byte()})
+			writeRowBytes(w, []byte{SpaceChar.Byte(), SpaceChar.Byte()})
 			writeRune(w, r.Config.listBullets[0])
 		} else {
 			if n.Parent().Parent().Parent().Parent() != nil {
 				if n.Parent().Parent().Parent().Parent().Kind().String() == ast.KindListItem.String() {
-					writeRowBytes(w, []byte{Space.Byte(), Space.Byte(), Space.Byte(), Space.Byte(), Space.Byte(), Space.Byte()})
+					writeRowBytes(w, []byte{SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte()})
 					writeRune(w, r.Config.listBullets[2])
 				} else {
-					writeRowBytes(w, []byte{Space.Byte(), Space.Byte(), Space.Byte(), Space.Byte()})
+					writeRowBytes(w, []byte{SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte()})
 					writeRune(w, r.Config.listBullets[1])
 				}
 			}
 		}
-		writeRowBytes(w, []byte{Space.Byte()})
+		writeRowBytes(w, []byte{SpaceChar.Byte()})
 	}
 	return ast.WalkContinue, nil
 }
@@ -144,7 +148,7 @@ func (r *Renderer) blockquote(w util.BufWriter, _ []byte, node ast.Node, enterin
 	writeNewLine(w)
 	n := node.(*ast.Blockquote)
 	if entering {
-		writeRowBytes(w, []byte{GreaterThan.Byte(), Space.Byte()})
+		writeRowBytes(w, []byte{GreaterThanChar.Byte(), SpaceChar.Byte()})
 	} else {
 		if n.Parent().Kind().String() == ast.KindDocument.String() {
 			writeNewLine(w)
@@ -156,21 +160,21 @@ func (r *Renderer) blockquote(w util.BufWriter, _ []byte, node ast.Node, enterin
 func (r *Renderer) strikethrough(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
-	writeWrapperArr(w.Write(Strikethrough.Bytes()))
+	writeWrapperArr(w.Write(StrikethroughTg.Bytes()))
 	return ast.WalkContinue, nil
 }
 
 func (r *Renderer) hidden(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
-	writeWrapperArr(w.Write(Hiddend.Bytes()))
+	writeWrapperArr(w.Write(HiddenTg.Bytes()))
 	return ast.WalkContinue, nil
 }
 
 func (r *Renderer) codeSpan(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
-	writeWrapperArr(w.Write(Form.Bytes()))
+	writeWrapperArr(w.Write(SpanTg.Bytes()))
 	return ast.WalkContinue, nil
 }
 
@@ -180,23 +184,24 @@ func (r *Renderer) code(w util.BufWriter, source []byte, node ast.Node, entering
 	n := node.(interface {
 		Lines() *textm.Segments
 	})
-	var content string
+	var content []byte
 	l := n.Lines().Len()
 	for i := 0; i < l; i++ {
 		line := n.Lines().At(i)
-		content += string(line.Value(source))
+		content = append(content, line.Value(source)...)
 	}
-	content = strings.ReplaceAll(content, "\t", "    ")
+	content = bytes.ReplaceAll(content, []byte{TabChar.Byte()}, []byte{SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte()})
 
 	nn := node.(*ast.FencedCodeBlock)
 	if entering {
 		writeNewLine(w)
-		writeWrapperArr(w.Write(Code.Bytes()))
+		writeWrapperArr(w.Write(CodeTg.Bytes()))
 		writeWrapperArr(w.Write(nn.Language(source)))
 	} else {
-		w.WriteByte('\n')
-		w.WriteString(content)
-		writeWrapperArr(w.Write(Code.Bytes()))
+		writeNewLine(w)
+		writeWrapperArr(w.Write(content))
+		writeWrapperArr(w.Write(CodeTg.Bytes()))
+		writeNewLine(w)
 	}
 	return ast.WalkContinue, nil
 }
