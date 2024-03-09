@@ -51,5 +51,5 @@ Contributions are welcome! Feel free to open issues for bugs 🐛,
 feature requests 🌈, or submit pull requests 💡. 
 
 Acknowledgments 💖
-- Thanks to the goldmark project for providing a robust and extensible Markdown parser.
+- Thanks to the [goldmark](https://github.com/yuin/goldmark) project for providing a robust and extensible Markdown parser.
 - This project is inspired by the formatting options available in Telegram.
