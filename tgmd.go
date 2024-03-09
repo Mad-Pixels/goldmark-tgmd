@@ -67,9 +67,13 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 ) {
 	n := node.(*ast.Heading)
 	if entering {
-		Config.headings[n.Level].writeStart(w)
+		writeNewLine(w)
+		if n.Level < 3 {
+			writeNewLine(w)
+		}
+		Config.headings[n.Level-1].writeStart(w)
 	} else {
-		Config.headings[n.Level].writeEnd(w)
+		Config.headings[n.Level-1].writeEnd(w)
 	}
 	return ast.WalkContinue, nil
 }
