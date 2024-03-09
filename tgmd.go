@@ -1,9 +1,8 @@
 package tgmd
 
 import (
-	"fmt"
-
 	"github.com/yuin/goldmark/ast"
+	ext "github.com/yuin/goldmark/extension/ast"
 	"github.com/yuin/goldmark/renderer"
 	"github.com/yuin/goldmark/util"
 )
@@ -27,6 +26,9 @@ func (r *Renderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindEmphasis, r.emphasis)
 	reg.Register(ast.KindLink, r.renderLink)
 	reg.Register(ast.KindList, r.list)
+
+	// re-define.
+	reg.Register(ext.KindStrikethrough, r.strikethrough)
 }
 
 func (r *Renderer) renderText(w util.BufWriter, source []byte, node ast.Node, entering bool) (
@@ -134,13 +136,6 @@ func (r *Renderer) blockquote(w util.BufWriter, _ []byte, node ast.Node, enterin
 func (r *Renderer) strikethrough(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
-	fmt.Println("AAAA")
-	if entering {
-		// При входе в узел - пишем открывающий тег
-		w.Write([]byte("<dessl>"))
-	} else {
-		// При выходе из узла - пишем закрывающий тег
-		w.Write([]byte("</dessl>"))
-	}
+	writeWrapperArr(w.Write(Strikethrough.Bytes()))
 	return ast.WalkContinue, nil
 }
