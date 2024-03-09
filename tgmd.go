@@ -1,9 +1,12 @@
 package tgmd
 
 import (
+	"strings"
+
 	"github.com/yuin/goldmark/ast"
 	ext "github.com/yuin/goldmark/extension/ast"
 	"github.com/yuin/goldmark/renderer"
+	textm "github.com/yuin/goldmark/text"
 	"github.com/yuin/goldmark/util"
 )
 
@@ -20,6 +23,8 @@ func NewRenderer(c *config) renderer.NodeRenderer {
 func (r *Renderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindText, r.renderText)
 
+	reg.Register(ast.KindFencedCodeBlock, r.code)
+	reg.Register(ast.KindCodeBlock, r.code)
 	reg.Register(ast.KindBlockquote, r.blockquote)
 	reg.Register(ast.KindHeading, r.heading)
 	reg.Register(ast.KindListItem, r.listItem)
@@ -145,5 +150,32 @@ func (r *Renderer) hidden(w util.BufWriter, _ []byte, node ast.Node, entering bo
 	ast.WalkStatus, error,
 ) {
 	writeWrapperArr(w.Write(Hiddend.Bytes()))
+	return ast.WalkContinue, nil
+}
+
+func (r *Renderer) code(w util.BufWriter, source []byte, node ast.Node, entering bool) (
+	ast.WalkStatus, error,
+) {
+	n := node.(interface {
+		Lines() *textm.Segments
+	})
+	var content string
+	l := n.Lines().Len()
+	for i := 0; i < l; i++ {
+		line := n.Lines().At(i)
+		content += string(line.Value(source))
+	}
+	content = strings.ReplaceAll(content, "\t", "    ")
+
+	nn := node.(*ast.FencedCodeBlock)
+	if entering {
+		writeNewLine(w)
+		writeWrapperArr(w.Write(Code.Bytes()))
+		writeWrapperArr(w.Write(nn.Language(source)))
+	} else {
+		w.WriteByte('\n')
+		w.WriteString(content)
+		writeWrapperArr(w.Write(Code.Bytes()))
+	}
 	return ast.WalkContinue, nil
 }

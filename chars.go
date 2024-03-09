@@ -66,6 +66,7 @@ var (
 	Mono          SpecialTag = [3]SpecialChar{Backqoute, Backqoute}
 	Hiddend       SpecialTag = [3]SpecialChar{Pipe, Pipe}
 	Italics       SpecialTag = [3]SpecialChar{Underscore}
+	Code          SpecialTag = [3]SpecialChar{Backqoute, Backqoute, Backqoute}
 )
 
 var escape = map[byte][]byte{
@@ -85,8 +86,8 @@ var escape = map[byte][]byte{
 	Exclamation.Byte():  Exclamation.Escaped(),
 	GreaterThan.Byte():  GreaterThan.Escaped(),
 	LessThan.Byte():     LessThan.Escaped(),
-	NewLine.Byte():      NewLine.Escaped(),
-	Tilde.Byte():        Tilde.Escaped(),
-	Pipe.Byte():         Pipe.Escaped(),
-	Backqoute.Byte():    Backqoute.Escaped(),
+	//NewLine.Byte():      NewLine.Escaped(),
+	Tilde.Byte(): Tilde.Escaped(),
+	Pipe.Byte():  Pipe.Escaped(),
+	//Backqoute.Byte():    Backqoute.Escaped(),
 }
