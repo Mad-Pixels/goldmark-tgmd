@@ -3,7 +3,8 @@ package tgmd
 import "github.com/yuin/goldmark/util"
 
 type config struct {
-	headings [6]Element
+	headings    [6]Element
+	listBullets [3]rune
 }
 
 // NewConfig for generate Tg styles.
@@ -34,6 +35,11 @@ func NewConfig() *config {
 				Style:  Italics,
 				Prefix: "",
 			},
+		},
+		listBullets: [3]rune{
+			SymbolCircle.Rune(),
+			SymbolSquare.Rune(),
+			SymbolTriangle.Rune(),
 		},
 	}
 }
@@ -66,6 +72,21 @@ func (c *config) UpdateHeading5(e Element) {
 // UpdateHeading6 change default H6 style.
 func (c *config) UpdateHeading6(e Element) {
 	c.headings[5] = e
+}
+
+// UpdatePrimaryBullet change default primary bullet.
+func (c *config) UpdatePrimaryBullet(r rune) {
+	c.listBullets[0] = r
+}
+
+// UpdateSecondaryBullet change default primary bullet.
+func (c *config) UpdateSecondaryBullet(r rune) {
+	c.listBullets[1] = r
+}
+
+// UpdateAdditionalBullet change default primary bullet.
+func (c *config) UpdateAdditionalBullet(r rune) {
+	c.listBullets[2] = r
 }
 
 // Element styles object.

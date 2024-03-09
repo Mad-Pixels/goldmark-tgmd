@@ -26,6 +26,10 @@ func render(w util.BufWriter, b []byte) {
 	writeCustomBytes(w, data)
 }
 
+func writeRune(w util.BufWriter, data rune) {
+	writeWrapperArr(w.WriteRune(data))
+}
+
 func writeRowBytes(w util.BufWriter, data []byte) {
 	writeWrapperArr(w.Write(data))
 }
