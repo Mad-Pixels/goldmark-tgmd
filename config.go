@@ -2,46 +2,43 @@ package tgmd
 
 import "github.com/yuin/goldmark/util"
 
+var Config = &config{
+	headings: [6]Element{
+		{
+			Style:  BoldTg,
+			Prefix: "# ",
+		},
+		{
+			Style:  BoldTg,
+			Prefix: "",
+		},
+		{
+			Style:  ItalicsTg,
+			Prefix: "# ",
+		},
+		{
+			Style:  ItalicsTg,
+			Prefix: "",
+		},
+		{
+			Style:  ItalicsTg,
+			Prefix: "~",
+		},
+		{
+			Style:  ItalicsTg,
+			Prefix: "",
+		},
+	},
+	listBullets: [3]rune{
+		CircleSymbol.Rune(),
+		SquareSymbol.Rune(),
+		TriangleSymbol.Rune(),
+	},
+}
+
 type config struct {
 	headings    [6]Element
 	listBullets [3]rune
-}
-
-// NewConfig for generate styles.
-func NewConfig() *config {
-	return &config{
-		headings: [6]Element{
-			{
-				Style:  BoldTg,
-				Prefix: "# ",
-			},
-			{
-				Style:  BoldTg,
-				Prefix: "",
-			},
-			{
-				Style:  ItalicsTg,
-				Prefix: "# ",
-			},
-			{
-				Style:  ItalicsTg,
-				Prefix: "",
-			},
-			{
-				Style:  ItalicsTg,
-				Prefix: "~",
-			},
-			{
-				Style:  ItalicsTg,
-				Prefix: "",
-			},
-		},
-		listBullets: [3]rune{
-			CircleSymbol.Rune(),
-			SquareSymbol.Rune(),
-			TriangleSymbol.Rune(),
-		},
-	}
 }
 
 // UpdateHeading1 change default H1 style.
@@ -74,18 +71,18 @@ func (c *config) UpdateHeading6(e Element) {
 	c.headings[5] = e
 }
 
-// UpdatePrimaryBullet change default primary bullet.
-func (c *config) UpdatePrimaryBullet(r rune) {
+// UpdatePrimaryListBullet change default primary bullet.
+func (c *config) UpdatePrimaryListBullet(r rune) {
 	c.listBullets[0] = r
 }
 
-// UpdateSecondaryBullet change default primary bullet.
-func (c *config) UpdateSecondaryBullet(r rune) {
+// UpdateSecondaryListBullet change default primary bullet.
+func (c *config) UpdateSecondaryListBullet(r rune) {
 	c.listBullets[1] = r
 }
 
-// UpdateAdditionalBullet change default primary bullet.
-func (c *config) UpdateAdditionalBullet(r rune) {
+// UpdateAdditionalListBullet change default primary bullet.
+func (c *config) UpdateAdditionalListBullet(r rune) {
 	c.listBullets[2] = r
 }
 

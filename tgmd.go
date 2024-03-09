@@ -12,11 +12,11 @@ import (
 )
 
 // TGMD (telegramMarkdown) endpoint.
-func TGMD(c *config) goldmark.Markdown {
+func TGMD() goldmark.Markdown {
 	return goldmark.New(
 		goldmark.WithRenderer(
 			renderer.NewRenderer(
-				renderer.WithNodeRenderers(util.Prioritized(NewRenderer(c), 1000)),
+				renderer.WithNodeRenderers(util.Prioritized(NewRenderer(), 1000)),
 			),
 		),
 		goldmark.WithExtensions(Strikethroughs),
@@ -25,15 +25,11 @@ func TGMD(c *config) goldmark.Markdown {
 }
 
 // Renderer implement renderer.NodeRenderer object.
-type Renderer struct {
-	Config *config
-}
+type Renderer struct{}
 
 // NewRenderer initialize Renderer as renderer.NodeRenderer.
-func NewRenderer(c *config) renderer.NodeRenderer {
-	return &Renderer{
-		Config: c,
-	}
+func NewRenderer() renderer.NodeRenderer {
+	return &Renderer{}
 }
 
 // RegisterFuncs add AST objects to Renderer.
@@ -71,9 +67,9 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 ) {
 	n := node.(*ast.Heading)
 	if entering {
-		r.Config.headings[n.Level].writeStart(w)
+		Config.headings[n.Level].writeStart(w)
 	} else {
-		r.Config.headings[n.Level].writeEnd(w)
+		Config.headings[n.Level].writeEnd(w)
 	}
 	return ast.WalkContinue, nil
 }
@@ -125,15 +121,15 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 		writeNewLine(w)
 		if n.Parent().Parent().Kind().String() == ast.KindDocument.String() {
 			writeRowBytes(w, []byte{SpaceChar.Byte(), SpaceChar.Byte()})
-			writeRune(w, r.Config.listBullets[0])
+			writeRune(w, Config.listBullets[0])
 		} else {
 			if n.Parent().Parent().Parent().Parent() != nil {
 				if n.Parent().Parent().Parent().Parent().Kind().String() == ast.KindListItem.String() {
 					writeRowBytes(w, []byte{SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte()})
-					writeRune(w, r.Config.listBullets[2])
+					writeRune(w, Config.listBullets[2])
 				} else {
 					writeRowBytes(w, []byte{SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte()})
-					writeRune(w, r.Config.listBullets[1])
+					writeRune(w, Config.listBullets[1])
 				}
 			}
 		}

@@ -93,6 +93,6 @@ func (e *hidden) Extend(m goldmark.Markdown) {
 		util.Prioritized(NewHiddenParser(), 500),
 	))
 	m.Renderer().AddOptions(renderer.WithNodeRenderers(
-		util.Prioritized(NewRenderer(nil), 500),
+		util.Prioritized(NewRenderer(), 500),
 	))
 }

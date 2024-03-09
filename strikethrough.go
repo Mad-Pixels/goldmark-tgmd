@@ -18,6 +18,6 @@ func (e *strikethrough) Extend(m goldmark.Markdown) {
 		util.Prioritized(ext.NewStrikethroughParser(), 500),
 	))
 	m.Renderer().AddOptions(renderer.WithNodeRenderers(
-		util.Prioritized(NewRenderer(nil), 500),
+		util.Prioritized(NewRenderer(), 500),
 	))
 }
