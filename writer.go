@@ -18,12 +18,16 @@ func writeSpecialTagEnd(w util.BufWriter, tag SpecialTag, postfix []byte) {
 }
 
 func writeNewLine(w util.BufWriter) {
-	writeCustomBytes(w, []byte{NewLine.Byte()})
+	writeCustomBytes(w, []byte{NewLineChar.Byte()})
 }
 
 func render(w util.BufWriter, b []byte) {
-	data := bytes.ReplaceAll(b, []byte{Space.Byte(), Space.Byte()}, []byte{NewLine.Byte()})
+	data := bytes.ReplaceAll(b, []byte{SpaceChar.Byte(), SpaceChar.Byte()}, []byte{NewLineChar.Byte()})
 	writeCustomBytes(w, data)
+}
+
+func writeRune(w util.BufWriter, data rune) {
+	writeWrapperArr(w.WriteRune(data))
 }
 
 func writeRowBytes(w util.BufWriter, data []byte) {
