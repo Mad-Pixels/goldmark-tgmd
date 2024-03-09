@@ -3,6 +3,7 @@ package tgmd
 import (
 	"strings"
 
+	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	ext "github.com/yuin/goldmark/extension/ast"
 	"github.com/yuin/goldmark/renderer"
@@ -20,6 +21,18 @@ func NewRenderer(c *config) renderer.NodeRenderer {
 	}
 }
 
+func TGMD(c *config) goldmark.Markdown {
+	return goldmark.New(
+		goldmark.WithRenderer(
+			renderer.NewRenderer(
+				renderer.WithNodeRenderers(util.Prioritized(NewRenderer(c), 1000)),
+			),
+		),
+		goldmark.WithExtensions(Strikethroughs),
+		goldmark.WithExtensions(Hidden),
+	)
+}
+
 func (r *Renderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindText, r.renderText)
 
@@ -31,6 +44,7 @@ func (r *Renderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindEmphasis, r.emphasis)
 	reg.Register(ast.KindLink, r.renderLink)
 	reg.Register(ast.KindList, r.list)
+	reg.Register(ast.KindCodeSpan, r.codeSpan)
 
 	// re-define.
 	reg.Register(ext.KindStrikethrough, r.strikethrough)
@@ -150,6 +164,13 @@ func (r *Renderer) hidden(w util.BufWriter, _ []byte, node ast.Node, entering bo
 	ast.WalkStatus, error,
 ) {
 	writeWrapperArr(w.Write(Hiddend.Bytes()))
+	return ast.WalkContinue, nil
+}
+
+func (r *Renderer) codeSpan(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
+	ast.WalkStatus, error,
+) {
+	writeWrapperArr(w.Write(Form.Bytes()))
 	return ast.WalkContinue, nil
 }
 

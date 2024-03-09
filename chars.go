@@ -67,6 +67,7 @@ var (
 	Hiddend       SpecialTag = [3]SpecialChar{Pipe, Pipe}
 	Italics       SpecialTag = [3]SpecialChar{Underscore}
 	Code          SpecialTag = [3]SpecialChar{Backqoute, Backqoute, Backqoute}
+	Form          SpecialTag = [3]SpecialChar{Backqoute}
 )
 
 var escape = map[byte][]byte{
