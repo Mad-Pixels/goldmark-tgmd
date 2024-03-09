@@ -29,6 +29,7 @@ func (r *Renderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 
 	// re-define.
 	reg.Register(ext.KindStrikethrough, r.strikethrough)
+	reg.Register(KindHidden, r.hidden)
 }
 
 func (r *Renderer) renderText(w util.BufWriter, source []byte, node ast.Node, entering bool) (
@@ -137,5 +138,12 @@ func (r *Renderer) strikethrough(w util.BufWriter, _ []byte, node ast.Node, ente
 	ast.WalkStatus, error,
 ) {
 	writeWrapperArr(w.Write(Strikethrough.Bytes()))
+	return ast.WalkContinue, nil
+}
+
+func (r *Renderer) hidden(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
+	ast.WalkStatus, error,
+) {
+	writeWrapperArr(w.Write(Hiddend.Bytes()))
 	return ast.WalkContinue, nil
 }

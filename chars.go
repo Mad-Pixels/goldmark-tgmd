@@ -64,7 +64,7 @@ var (
 	Strikethrough SpecialTag = [3]SpecialChar{Tilde, Tilde, Tilde}
 	Underline     SpecialTag = [3]SpecialChar{Underscore, Underscore}
 	Mono          SpecialTag = [3]SpecialChar{Backqoute, Backqoute}
-	Hidden        SpecialTag = [3]SpecialChar{Pipe, Pipe}
+	Hiddend       SpecialTag = [3]SpecialChar{Pipe, Pipe}
 	Italics       SpecialTag = [3]SpecialChar{Underscore}
 )
 
@@ -86,6 +86,7 @@ var escape = map[byte][]byte{
 	GreaterThan.Byte():  GreaterThan.Escaped(),
 	LessThan.Byte():     LessThan.Escaped(),
 	NewLine.Byte():      NewLine.Escaped(),
-	//Tilde.Byte():        Tilde.Escaped(),
-	Backqoute.Byte(): Backqoute.Escaped(),
+	Tilde.Byte():        Tilde.Escaped(),
+	Pipe.Byte():         Pipe.Escaped(),
+	Backqoute.Byte():    Backqoute.Escaped(),
 }
