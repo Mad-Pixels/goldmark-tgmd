@@ -1,5 +1,4 @@
 # Heading1 🎉
-content 1
 
 ## Features
 Here are some of the custom Telegram Markdown features:
@@ -17,11 +16,22 @@ This is the list with sub-items.
 - Item 4
   - Subitem 4.1
 
+## Code Blocks
+```go
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, world!")
+}
+```
+
 ## Quotes
 > This is a quote. Quotes are great for highlighting important messages.
 
 ## Text
-Long text with  newlines inside.
+Long text with  newlines inside with `code span`. 
 
 ## Link
 Check out [goldmark](https://github.com/yuin/goldmark), the Markdown parser used in this project.

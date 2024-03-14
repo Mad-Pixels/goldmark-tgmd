@@ -139,6 +139,7 @@ func (r *Renderer) code(w util.BufWriter, source []byte, node ast.Node, entering
 	)
 	nn := node.(*ast.FencedCodeBlock)
 	if entering {
+		writeNewLine(w)
 		writeWrapperArr(w.Write(CodeTg.Bytes()))
 		writeWrapperArr(w.Write(nn.Language(source)))
 	} else {
