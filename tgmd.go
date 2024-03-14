@@ -34,32 +34,24 @@ func NewRenderer() renderer.NodeRenderer {
 
 // RegisterFuncs add AST objects to Renderer.
 func (r *Renderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
+	reg.Register(ast.KindDocument, r.document)
+	reg.Register(ast.KindParagraph, r.paragraph)
+
 	reg.Register(ast.KindText, r.renderText)
+	reg.Register(ast.KindString, r.renderText)
+	reg.Register(ast.KindEmphasis, r.emphasis)
+
+	reg.Register(ast.KindHeading, r.heading)
+	reg.Register(ast.KindList, r.list)
+	reg.Register(ast.KindListItem, r.listItem)
+	reg.Register(ast.KindLink, r.link)
 
 	reg.Register(ast.KindBlockquote, r.blockquote)
 	reg.Register(ast.KindFencedCodeBlock, r.code)
-	reg.Register(ast.KindListItem, r.listItem)
-	reg.Register(ast.KindEmphasis, r.emphasis)
 	reg.Register(ast.KindCodeSpan, r.codeSpan)
-	reg.Register(ast.KindLink, r.renderLink)
-	reg.Register(ast.KindHeading, r.heading)
-	reg.Register(ast.KindCodeBlock, r.code)
-	reg.Register(ast.KindList, r.list)
 
-	// custom.
 	reg.Register(ext.KindStrikethrough, r.strikethrough)
 	reg.Register(KindHidden, r.hidden)
-}
-
-func (r *Renderer) renderText(w util.BufWriter, source []byte, node ast.Node, entering bool) (
-	ast.WalkStatus, error,
-) {
-	if !entering {
-		return ast.WalkContinue, nil
-	}
-	n := node.(*ast.Text)
-	render(w, n.Segment.Value(source))
-	return ast.WalkContinue, nil
 }
 
 func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
@@ -67,8 +59,7 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 ) {
 	n := node.(*ast.Heading)
 	if entering {
-		writeNewLine(w)
-		if n.Level < 3 {
+		if n.Level > 1 && n.Level < 4 {
 			writeNewLine(w)
 		}
 		Config.headings[n.Level-1].writeStart(w)
@@ -78,29 +69,16 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 	return ast.WalkContinue, nil
 }
 
-func (r *Renderer) renderLink(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
+func (r *Renderer) paragraph(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
-	n := node.(*ast.Link)
+	n := node.(*ast.Paragraph)
 	if entering {
-		writeRowBytes(w, []byte{OpenBracketChar.Byte()})
+		if n.Parent().Kind().String() != ast.KindBlockquote.String() {
+			writeNewLine(w)
+		}
 	} else {
-		writeRowBytes(w, []byte{CloseBracketChar.Byte(), OpenParenChar.Byte()})
-		writeRowBytes(w, n.Destination)
-		writeRowBytes(w, []byte{CloseParenChar.Byte()})
-	}
-	return ast.WalkContinue, nil
-}
-
-func (r *Renderer) emphasis(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
-	ast.WalkStatus, error,
-) {
-	n := node.(*ast.Emphasis)
-	if n.Level == 2 {
-		writeRowBytes(w, BoldTg.Bytes())
-	}
-	if n.Level == 1 {
-		writeRowBytes(w, ItalicsTg.Bytes())
+		writeNewLine(w)
 	}
 	return ast.WalkContinue, nil
 }
@@ -142,42 +120,6 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 	return ast.WalkContinue, nil
 }
 
-func (r *Renderer) blockquote(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
-	ast.WalkStatus, error,
-) {
-	writeNewLine(w)
-	n := node.(*ast.Blockquote)
-	if entering {
-		writeRowBytes(w, []byte{GreaterThanChar.Byte(), SpaceChar.Byte()})
-	} else {
-		if n.Parent().Kind().String() == ast.KindDocument.String() {
-			writeNewLine(w)
-		}
-	}
-	return ast.WalkContinue, nil
-}
-
-func (r *Renderer) strikethrough(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
-	ast.WalkStatus, error,
-) {
-	writeWrapperArr(w.Write(StrikethroughTg.Bytes()))
-	return ast.WalkContinue, nil
-}
-
-func (r *Renderer) hidden(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
-	ast.WalkStatus, error,
-) {
-	writeWrapperArr(w.Write(HiddenTg.Bytes()))
-	return ast.WalkContinue, nil
-}
-
-func (r *Renderer) codeSpan(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
-	ast.WalkStatus, error,
-) {
-	writeWrapperArr(w.Write(SpanTg.Bytes()))
-	return ast.WalkContinue, nil
-}
-
 func (r *Renderer) code(w util.BufWriter, source []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
@@ -190,11 +132,13 @@ func (r *Renderer) code(w util.BufWriter, source []byte, node ast.Node, entering
 		line := n.Lines().At(i)
 		content = append(content, line.Value(source)...)
 	}
-	content = bytes.ReplaceAll(content, []byte{TabChar.Byte()}, []byte{SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte()})
-
+	content = bytes.ReplaceAll(
+		content,
+		[]byte{TabChar.Byte()},
+		[]byte{SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte()},
+	)
 	nn := node.(*ast.FencedCodeBlock)
 	if entering {
-		writeNewLine(w)
 		writeWrapperArr(w.Write(CodeTg.Bytes()))
 		writeWrapperArr(w.Write(nn.Language(source)))
 	} else {
@@ -203,5 +147,80 @@ func (r *Renderer) code(w util.BufWriter, source []byte, node ast.Node, entering
 		writeWrapperArr(w.Write(CodeTg.Bytes()))
 		writeNewLine(w)
 	}
+	return ast.WalkContinue, nil
+}
+
+func (r *Renderer) renderText(w util.BufWriter, source []byte, node ast.Node, entering bool) (
+	ast.WalkStatus, error,
+) {
+	if !entering {
+		return ast.WalkContinue, nil
+	}
+	n := node.(*ast.Text)
+	render(w, n.Segment.Value(source))
+	return ast.WalkContinue, nil
+}
+
+func (r *Renderer) emphasis(w util.BufWriter, _ []byte, node ast.Node, _ bool) (
+	ast.WalkStatus, error,
+) {
+	n := node.(*ast.Emphasis)
+	if n.Level == 2 {
+		writeRowBytes(w, BoldTg.Bytes())
+	}
+	if n.Level == 1 {
+		writeRowBytes(w, ItalicsTg.Bytes())
+	}
+	return ast.WalkContinue, nil
+}
+
+func (r *Renderer) link(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
+	ast.WalkStatus, error,
+) {
+	n := node.(*ast.Link)
+	if entering {
+		writeRowBytes(w, []byte{OpenBracketChar.Byte()})
+	} else {
+		writeRowBytes(w, []byte{CloseBracketChar.Byte(), OpenParenChar.Byte()})
+		writeRowBytes(w, n.Destination)
+		writeRowBytes(w, []byte{CloseParenChar.Byte()})
+	}
+	return ast.WalkContinue, nil
+}
+
+func (r *Renderer) blockquote(w util.BufWriter, _ []byte, _ ast.Node, entering bool) (
+	ast.WalkStatus, error,
+) {
+	if entering {
+		writeNewLine(w)
+		writeRowBytes(w, []byte{GreaterThanChar.Byte()})
+	}
+	return ast.WalkContinue, nil
+}
+
+func (r *Renderer) codeSpan(w util.BufWriter, _ []byte, _ ast.Node, _ bool) (
+	ast.WalkStatus, error,
+) {
+	writeWrapperArr(w.Write(SpanTg.Bytes()))
+	return ast.WalkContinue, nil
+}
+
+func (r *Renderer) strikethrough(w util.BufWriter, _ []byte, _ ast.Node, _ bool) (
+	ast.WalkStatus, error,
+) {
+	writeWrapperArr(w.Write(StrikethroughTg.Bytes()))
+	return ast.WalkContinue, nil
+}
+
+func (r *Renderer) hidden(w util.BufWriter, _ []byte, _ ast.Node, _ bool) (
+	ast.WalkStatus, error,
+) {
+	writeWrapperArr(w.Write(HiddenTg.Bytes()))
+	return ast.WalkContinue, nil
+}
+
+func (r *Renderer) document(w util.BufWriter, _ []byte, _ ast.Node, _ bool) (
+	ast.WalkStatus, error,
+) {
 	return ast.WalkContinue, nil
 }

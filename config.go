@@ -99,5 +99,4 @@ func (e Element) writeStart(w util.BufWriter) {
 
 func (e Element) writeEnd(w util.BufWriter) {
 	writeSpecialTagEnd(w, e.Style, StringToBytes(e.Postfix))
-	writeNewLine(w)
 }

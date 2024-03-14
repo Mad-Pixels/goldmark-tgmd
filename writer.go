@@ -22,7 +22,11 @@ func writeNewLine(w util.BufWriter) {
 }
 
 func render(w util.BufWriter, b []byte) {
-	data := bytes.ReplaceAll(b, []byte{SpaceChar.Byte(), SpaceChar.Byte()}, []byte{NewLineChar.Byte()})
+	data := bytes.ReplaceAll(
+		b,
+		[]byte{SpaceChar.Byte(), SpaceChar.Byte()},
+		[]byte{NewLineChar.Byte()},
+	)
 	writeCustomBytes(w, data)
 }
 
