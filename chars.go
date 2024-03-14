@@ -1,5 +1,10 @@
 package tgmd
 
+import (
+	"reflect"
+	"unsafe"
+)
+
 // SpecialRune define custom rune object.
 type SpecialRune rune
 
@@ -22,11 +27,14 @@ func (sc SpecialChar) Escaped() []byte {
 }
 
 // SpecialTag define Markdown formatting characters.
-type SpecialTag [3]SpecialChar
+type SpecialTag []SpecialChar
 
 // Bytes from SpecialTags.
 func (st SpecialTag) Bytes() []byte {
-	return []byte{st[0].Byte(), st[1].Byte(), st[2].Byte()}
+	header := *(*reflect.SliceHeader)(unsafe.Pointer(&st))
+	header.Len *= int(unsafe.Sizeof(SpecialChar(0)))
+	header.Cap *= int(unsafe.Sizeof(SpecialChar(0)))
+	return *(*[]byte)(unsafe.Pointer(&header))
 }
 
 // define characters.
@@ -65,13 +73,13 @@ const (
 
 // define Telegram Markdown formatting tags.
 var (
-	BoldTg          SpecialTag = [3]SpecialChar{AsteriskChar, AsteriskChar, AsteriskChar}
-	StrikethroughTg SpecialTag = [3]SpecialChar{TildeChar, TildeChar, TildeChar}
-	UnderlineTg     SpecialTag = [3]SpecialChar{UnderscoreChar, UnderscoreChar}
-	HiddenTg        SpecialTag = [3]SpecialChar{PipeChar, PipeChar}
-	ItalicsTg       SpecialTag = [3]SpecialChar{UnderscoreChar}
-	CodeTg          SpecialTag = [3]SpecialChar{BackqouteChar, BackqouteChar, BackqouteChar}
-	SpanTg          SpecialTag = [3]SpecialChar{BackqouteChar}
+	BoldTg          SpecialTag = []SpecialChar{AsteriskChar, AsteriskChar, AsteriskChar}
+	StrikethroughTg SpecialTag = []SpecialChar{TildeChar, TildeChar, TildeChar}
+	UnderlineTg     SpecialTag = []SpecialChar{UnderscoreChar, UnderscoreChar}
+	HiddenTg        SpecialTag = []SpecialChar{PipeChar, PipeChar}
+	ItalicsTg       SpecialTag = []SpecialChar{UnderscoreChar}
+	CodeTg          SpecialTag = []SpecialChar{BackqouteChar, BackqouteChar, BackqouteChar}
+	SpanTg          SpecialTag = []SpecialChar{BackqouteChar}
 )
 
 // define escape map.
