@@ -14,7 +14,7 @@ for bots 🤖 and applications integrated with Telegram 📱.
 
 ## Getting Started 🚀
 ### Prerequisites 📋
-- Go 1.22 or higher
+- Go 1.19 or higher
 
 ### Installation 💽
 To install goldmark-tgmd, use the following go get command:
