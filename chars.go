@@ -67,8 +67,8 @@ const (
 // define symbols.
 const (
 	CircleSymbol   SpecialRune = '•'
-	TriangleSymbol SpecialRune = '‣'
-	SquareSymbol   SpecialRune = '▪'
+	TriangleSymbol SpecialRune = '⁃'
+	SquareSymbol   SpecialRune = '‣'
 )
 
 // define Telegram Markdown formatting tags.
