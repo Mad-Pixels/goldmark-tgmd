@@ -77,6 +77,7 @@ var (
 	StrikethroughTg SpecialTag = []SpecialChar{TildeChar, TildeChar, TildeChar}
 	UnderlineTg     SpecialTag = []SpecialChar{UnderscoreChar, UnderscoreChar}
 	HiddenTg        SpecialTag = []SpecialChar{PipeChar, PipeChar}
+	DoubleSpaceTg   SpecialTag = []SpecialChar{NewLineChar}
 	ItalicsTg       SpecialTag = []SpecialChar{UnderscoreChar}
 	CodeTg          SpecialTag = []SpecialChar{BackqouteChar, BackqouteChar, BackqouteChar}
 	SpanTg          SpecialTag = []SpecialChar{BackqouteChar}

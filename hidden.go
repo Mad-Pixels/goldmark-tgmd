@@ -44,7 +44,7 @@ func (p *hiddenDelimiterProcessor) CanOpenCloser(opener, closer *parser.Delimite
 }
 
 // OnMatch ...
-func (p *hiddenDelimiterProcessor) OnMatch(consumes int) ast.Node {
+func (p *hiddenDelimiterProcessor) OnMatch(_ int) ast.Node {
 	return NewHidden()
 }
 
@@ -65,7 +65,7 @@ func (s *hiddenParser) Trigger() []byte {
 }
 
 // Parse source.
-func (s *hiddenParser) Parse(parent ast.Node, block text.Reader, pc parser.Context) ast.Node {
+func (s *hiddenParser) Parse(_ ast.Node, block text.Reader, pc parser.Context) ast.Node {
 	before := block.PrecendingCharacter()
 	line, segment := block.PeekLine()
 	node := parser.ScanDelimiter(line, before, 2, defaultHiddenDelimiterProcessor)
@@ -79,7 +79,7 @@ func (s *hiddenParser) Parse(parent ast.Node, block text.Reader, pc parser.Conte
 }
 
 // CloseBlock ...
-func (s *hiddenParser) CloseBlock(parent ast.Node, pc parser.Context) {
+func (s *hiddenParser) CloseBlock(_ ast.Node, _ parser.Context) {
 	// nothing to do
 }
 

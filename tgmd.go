@@ -21,6 +21,7 @@ func TGMD() goldmark.Markdown {
 		),
 		goldmark.WithExtensions(Strikethroughs),
 		goldmark.WithExtensions(Hidden),
+		goldmark.WithExtensions(DoubleSpace),
 	)
 }
 
@@ -52,6 +53,7 @@ func (r *Renderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 
 	reg.Register(ext.KindStrikethrough, r.strikethrough)
 	reg.Register(KindHidden, r.hidden)
+	reg.Register(KindDoubleSpace, r.doubleSpace)
 }
 
 func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
@@ -216,11 +218,18 @@ func (r *Renderer) strikethrough(w util.BufWriter, _ []byte, _ ast.Node, _ bool)
 func (r *Renderer) hidden(w util.BufWriter, _ []byte, _ ast.Node, _ bool) (
 	ast.WalkStatus, error,
 ) {
+	writeWrapperArr(w.Write(DoubleSpaceTg.Bytes()))
+	return ast.WalkContinue, nil
+}
+
+func (r *Renderer) doubleSpace(w util.BufWriter, _ []byte, _ ast.Node, _ bool) (
+	ast.WalkStatus, error,
+) {
 	writeWrapperArr(w.Write(HiddenTg.Bytes()))
 	return ast.WalkContinue, nil
 }
 
-func (r *Renderer) document(w util.BufWriter, _ []byte, _ ast.Node, _ bool) (
+func (r *Renderer) document(_ util.BufWriter, _ []byte, _ ast.Node, _ bool) (
 	ast.WalkStatus, error,
 ) {
 	return ast.WalkContinue, nil
