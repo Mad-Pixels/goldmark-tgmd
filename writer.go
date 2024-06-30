@@ -1,7 +1,6 @@
 package tgmd
 
 import (
-	"bytes"
 	"os"
 
 	"github.com/yuin/goldmark/util"
@@ -22,12 +21,7 @@ func writeNewLine(w util.BufWriter) {
 }
 
 func render(w util.BufWriter, b []byte) {
-	data := bytes.ReplaceAll(
-		b,
-		[]byte{SpaceChar.Byte(), SpaceChar.Byte()},
-		[]byte{NewLineChar.Byte()},
-	)
-	writeCustomBytes(w, data)
+	writeCustomBytes(w, b)
 }
 
 func writeRune(w util.BufWriter, data rune) {
