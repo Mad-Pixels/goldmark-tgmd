@@ -38,5 +38,5 @@ Check out [goldmark](https://github.com/yuin/goldmark), the Markdown parser used
 
 Another text paragraph with new line.
 
-Text  Text  
-Text
+Double Space acts as  
+Line  Break
