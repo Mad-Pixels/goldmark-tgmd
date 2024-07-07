@@ -2,7 +2,6 @@ package tgmd
 
 import (
 	"bytes"
-
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	ext "github.com/yuin/goldmark/extension/ast"
@@ -21,6 +20,7 @@ func TGMD() goldmark.Markdown {
 		),
 		goldmark.WithExtensions(Strikethroughs),
 		goldmark.WithExtensions(Hidden),
+		goldmark.WithExtensions(DoubleSpace),
 	)
 }
 
@@ -38,7 +38,7 @@ func (r *Renderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindParagraph, r.paragraph)
 
 	reg.Register(ast.KindText, r.renderText)
-	reg.Register(ast.KindString, r.renderText)
+	reg.Register(ast.KindString, r.renderString)
 	reg.Register(ast.KindEmphasis, r.emphasis)
 
 	reg.Register(ast.KindHeading, r.heading)
@@ -52,6 +52,7 @@ func (r *Renderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 
 	reg.Register(ext.KindStrikethrough, r.strikethrough)
 	reg.Register(KindHidden, r.hidden)
+	reg.Register(KindDoubleSpace, r.doubleSpace)
 }
 
 func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
@@ -158,7 +159,22 @@ func (r *Renderer) renderText(w util.BufWriter, source []byte, node ast.Node, en
 		return ast.WalkContinue, nil
 	}
 	n := node.(*ast.Text)
-	render(w, n.Segment.Value(source))
+	text := n.Segment.Value(source)
+	if n.HardLineBreak() {
+		text = append(text, "\n"...)
+	}
+	render(w, text)
+	return ast.WalkContinue, nil
+}
+
+func (r *Renderer) renderString(w util.BufWriter, source []byte, node ast.Node, entering bool) (
+	ast.WalkStatus, error,
+) {
+	if !entering {
+		return ast.WalkContinue, nil
+	}
+	n := node.(*ast.String)
+	_, _ = w.Write(n.Value)
 	return ast.WalkContinue, nil
 }
 
@@ -220,7 +236,13 @@ func (r *Renderer) hidden(w util.BufWriter, _ []byte, _ ast.Node, _ bool) (
 	return ast.WalkContinue, nil
 }
 
-func (r *Renderer) document(w util.BufWriter, _ []byte, _ ast.Node, _ bool) (
+func (r *Renderer) doubleSpace(_ util.BufWriter, _ []byte, _ ast.Node, _ bool) (
+	ast.WalkStatus, error,
+) {
+	return ast.WalkContinue, nil
+}
+
+func (r *Renderer) document(_ util.BufWriter, _ []byte, _ ast.Node, _ bool) (
 	ast.WalkStatus, error,
 ) {
 	return ast.WalkContinue, nil
