@@ -6,7 +6,7 @@ var Config = &config{
 	headings: [6]Element{
 		{
 			Style:  BoldTg,
-			Prefix: "# ",
+			Prefix: "",
 		},
 		{
 			Style:  BoldTg,
@@ -14,7 +14,7 @@ var Config = &config{
 		},
 		{
 			Style:  ItalicsTg,
-			Prefix: "# ",
+			Prefix: "",
 		},
 		{
 			Style:  ItalicsTg,
@@ -22,7 +22,7 @@ var Config = &config{
 		},
 		{
 			Style:  ItalicsTg,
-			Prefix: "~",
+			Prefix: "",
 		},
 		{
 			Style:  ItalicsTg,

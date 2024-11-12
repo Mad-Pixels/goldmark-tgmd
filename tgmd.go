@@ -84,15 +84,26 @@ func (r *Renderer) paragraph(w util.BufWriter, _ []byte, node ast.Node, entering
 	return ast.WalkContinue, nil
 }
 
-func (r *Renderer) list(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
+func (r *Renderer) list(w util.BufWriter, source []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
 	n := node.(*ast.List)
 	if !entering {
-		if n.Parent().Kind().String() == ast.KindDocument.String() {
+		parent := n.Parent()
+
+		if parent.Kind().String() == ast.KindDocument.String() {
+			parentContent := []rune(string(parent.Text(source)))
+
+			for _, bullet := range Config.listBullets {
+				if len(parentContent) == 1 && parentContent[0] == bullet {
+					return ast.WalkContinue, nil
+				}
+			}
+
 			writeNewLine(w)
 		}
 	}
+
 	return ast.WalkContinue, nil
 }
 
