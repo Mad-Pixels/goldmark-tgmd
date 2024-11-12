@@ -1,4 +1,4 @@
-module github.com/Mad-Pixels/goldmark-tgmd
+module github.com/YukiWitch/goldmark-tgmd
 
 go 1.19
 

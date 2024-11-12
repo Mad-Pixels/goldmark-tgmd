@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	tgmd "github.com/Mad-Pixels/goldmark-tgmd"
+	tgmd "github.com/YukiWitch/goldmark-tgmd"
 )
 
 func main() {
