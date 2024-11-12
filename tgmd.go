@@ -94,15 +94,13 @@ func (r *Renderer) list(w util.BufWriter, source []byte, node ast.Node, entering
 		if parent.Kind().String() == ast.KindDocument.String() {
 			parentContent := []rune(string(parent.Text(source)))
 
-			if len(parentContent) == 1 && parentContent[0] == Config.listBullets[0] { // Замените '*' на вашу руну
-				return ast.WalkContinue, nil
-			} else if len(parentContent) == 1 && parentContent[0] == Config.listBullets[1] {
-				return ast.WalkContinue, nil
-			} else if len(parentContent) == 1 && parentContent[0] == Config.listBullets[2] {
-				return ast.WalkContinue, nil
-			} else {
-				writeNewLine(w)
+			for _, bullet := range Config.listBullets {
+				if len(parentContent) == 1 && parentContent[0] == bullet {
+					return ast.WalkContinue, nil
+				}
 			}
+
+			writeNewLine(w)
 		}
 	}
 
