@@ -84,15 +84,28 @@ func (r *Renderer) paragraph(w util.BufWriter, _ []byte, node ast.Node, entering
 	return ast.WalkContinue, nil
 }
 
-func (r *Renderer) list(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
+func (r *Renderer) list(w util.BufWriter, source []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
 	n := node.(*ast.List)
 	if !entering {
-		if n.Parent().Kind().String() == ast.KindDocument.String() {
-			writeNewLine(w)
+		parent := n.Parent()
+
+		if parent.Kind().String() == ast.KindDocument.String() {
+			parentContent := []rune(string(parent.Text(source)))
+
+			if len(parentContent) == 1 && parentContent[0] == Config.listBullets[0] { // Замените '*' на вашу руну
+				return ast.WalkContinue, nil
+			} else if len(parentContent) == 1 && parentContent[0] == Config.listBullets[1] {
+				return ast.WalkContinue, nil
+			} else if len(parentContent) == 1 && parentContent[0] == Config.listBullets[2] {
+				return ast.WalkContinue, nil
+			} else {
+				writeNewLine(w)
+			}
 		}
 	}
+
 	return ast.WalkContinue, nil
 }
 
