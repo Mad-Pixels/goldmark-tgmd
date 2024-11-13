@@ -132,26 +132,29 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 	n := node.(*ast.ListItem)
 	if entering {
 		//writeRowBytes(w, []byte("LISTITEM\\_NEW\\_LINE"))
-		if n.Parent().Kind() == ast.KindListItem {
-			writeNewLine(w)
-		}
+		//if n.Parent().Kind() == ast.KindListItem {
+		//	writeNewLine(w)
+		//}
 		//writeNewLine(w)
 		if n.Parent().Parent().Kind().String() == ast.KindDocument.String() {
-			writeRowBytes(w, SpaceChar.Bytes(4))
+			writeRowBytes(w, SpaceChar.Bytes(2))
 			writeRune(w, Config.listBullets[0])
 		} else {
 			if n.Parent().Parent().Parent().Parent() != nil {
 				if n.Parent().Parent().Parent().Parent().Kind().String() == ast.KindListItem.String() {
-					writeRowBytes(w, SpaceChar.Bytes(8))
+					writeRowBytes(w, SpaceChar.Bytes(6))
 					writeRune(w, Config.listBullets[2])
 				} else {
-					writeRowBytes(w, SpaceChar.Bytes(8))
+					writeRowBytes(w, SpaceChar.Bytes(4))
 					writeRune(w, Config.listBullets[1])
 				}
 			}
 		}
 		writeRowBytes(w, []byte{SpaceChar.Byte()})
+	} else {
+		writeNewLine(w)
 	}
+
 	return ast.WalkContinue, nil
 }
 
