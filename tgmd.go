@@ -80,17 +80,17 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
-	n := node.(*ast.Paragraph)
+	//n := node.(*ast.Paragraph)
 
 	if entering {
-		if n.Parent().Kind() != ast.KindListItem {
-			return ast.WalkContinue, nil
-		}
-
-		if n.HasBlankPreviousLines() {
-			writeNewLine(w)
-			writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_ENTER"))
-		}
+		//if n.Parent().Kind() != ast.KindListItem {
+		//	return ast.WalkContinue, nil
+		//}
+		//
+		//if n.HasBlankPreviousLines() {
+		//	writeNewLine(w)
+		//	writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_ENTER"))
+		//}
 		//writeRowBytes(w, []byte("Enter"))
 		//writeRowBytes(w, []byte(n.Parent().Kind().String()))
 		//writeRowBytes(w, []byte(n.PreviousSibling().Kind().String()))
@@ -156,12 +156,13 @@ func (r *Renderer) listItem(w util.BufWriter, source []byte, node ast.Node, ente
 ) {
 	n := node.(*ast.ListItem)
 	if entering {
-		writeNewLine(w)
-		writeRowBytes(w, []byte("LISTITEM\\_NEW\\_LINE\\_ENTER"))
+		//writeNewLine(w)
+		//writeRowBytes(w, []byte("LISTITEM\\_NEW\\_LINE\\_ENTER"))
 
-		//if !node.HasBlankPreviousLines() {
-		//	writeNewLine(w)
-		//}
+		if n.HasBlankPreviousLines() {
+			writeNewLine(w)
+			writeRowBytes(w, []byte("LISTITEM\\_NEW\\_LINE\\_ENTER"))
+		}
 
 		//writeRowBytes(w, []byte("Enter"))
 		//writeRowBytes(w, []byte(n.Parent().Kind().String()))
