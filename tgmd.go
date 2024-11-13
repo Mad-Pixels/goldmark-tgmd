@@ -2,6 +2,7 @@ package tgmd
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	ext "github.com/yuin/goldmark/extension/ast"
@@ -99,7 +100,10 @@ func (r *Renderer) list(w util.BufWriter, source []byte, node ast.Node, entering
 					return ast.WalkContinue, nil
 				}
 			}
-
+			fmt.Println("XXXXXXXXXXXXXXXXXXXXXX")
+			fmt.Println(parentContent)
+			fmt.Println("XXXXXXXXXXXXXXXXXXXXXX")
+			writeRowBytes(w, []byte("test"))
 			writeNewLine(w)
 		}
 	}
@@ -112,7 +116,6 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 ) {
 	n := node.(*ast.ListItem)
 	if entering {
-		writeRowBytes(w, []byte("test"))
 		writeNewLine(w)
 		if n.Parent().Parent().Kind().String() == ast.KindDocument.String() {
 			writeRowBytes(w, []byte{SpaceChar.Byte(), SpaceChar.Byte()})
