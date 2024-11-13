@@ -13,7 +13,7 @@ var Config = &config{
 			Prefix: "",
 		},
 		{
-			Style:  ItalicsTg,
+			Style:  BoldTg,
 			Prefix: "",
 		},
 		{

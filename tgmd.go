@@ -62,8 +62,9 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 	if entering {
 		//if n.Level > 1 && n.Level < 4 {
 		//	writeRowBytes(w, []byte("HEADING\\_NEW\\_LINE\\_ENTER"))
-		//	writeNewLine(w)
+		//
 		//}
+		writeNewLine(w)
 		Config.headings[n.Level-1].writeStart(w)
 	} else {
 		Config.headings[n.Level-1].writeEnd(w)
@@ -88,6 +89,11 @@ func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, ent
 	//	//writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_EXIT"))
 	//	writeNewLine(w)
 	//}
+
+	if !entering {
+		writeNewLine(w)
+	}
+
 	return ast.WalkContinue, nil
 }
 
