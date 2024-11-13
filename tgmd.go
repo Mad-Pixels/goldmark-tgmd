@@ -120,7 +120,7 @@ func (r *Renderer) list(w util.BufWriter, source []byte, node ast.Node, entering
 	n := node.(*ast.List)
 
 	if entering {
-		if n.Parent().Kind() == ast.KindList || node.HasBlankPreviousLines() {
+		if n.HasBlankPreviousLines() {
 			writeNewLine(w)
 		}
 	}
@@ -153,9 +153,11 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 ) {
 	n := node.(*ast.ListItem)
 	if entering {
-		if !node.HasBlankPreviousLines() {
-			writeNewLine(w)
-		}
+		writeNewLine(w)
+
+		//if !node.HasBlankPreviousLines() {
+		//	writeNewLine(w)
+		//}
 
 		//writeRowBytes(w, []byte("Enter"))
 		//writeRowBytes(w, []byte(n.Parent().Kind().String()))
