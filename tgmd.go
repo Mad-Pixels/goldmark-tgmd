@@ -153,6 +153,10 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 ) {
 	n := node.(*ast.ListItem)
 	if entering {
+		if !node.HasBlankPreviousLines() {
+			writeNewLine(w)
+		}
+
 		//writeRowBytes(w, []byte("Enter"))
 		//writeRowBytes(w, []byte(n.Parent().Kind().String()))
 		//writeRowBytes(w, []byte("LISTITEM\\_NEW\\_LINE"))
