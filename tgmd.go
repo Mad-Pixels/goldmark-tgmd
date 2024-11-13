@@ -78,16 +78,16 @@ func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, ent
 ) {
 	//n := node.(*ast.Paragraph)
 
-	if entering {
-		//if n.Parent().Kind().String() != ast.KindBlockquote.String() {
-		//	n.Parent().OwnerDocument()
-		//	writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_ENTER"))
-		//	writeNewLine(w)
-		//}
-	} else {
-		//writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_EXIT"))
-		writeNewLine(w)
-	}
+	//if entering {
+	//	//if n.Parent().Kind().String() != ast.KindBlockquote.String() {
+	//	//	n.Parent().OwnerDocument()
+	//	//	writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_ENTER"))
+	//	//	writeNewLine(w)
+	//	//}
+	//} else {
+	//	//writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_EXIT"))
+	//	writeNewLine(w)
+	//}
 	return ast.WalkContinue, nil
 }
 
