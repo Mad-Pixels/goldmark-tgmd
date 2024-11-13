@@ -104,7 +104,7 @@ func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, ent
 	} else {
 		//	//writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_EXIT"))
 		writeNewLine(w)
-		writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_EXIT"))
+		//writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_EXIT"))
 	}
 
 	//if entering {
@@ -156,7 +156,7 @@ func (r *Renderer) listItem(w util.BufWriter, source []byte, node ast.Node, ente
 ) {
 	n := node.(*ast.ListItem)
 	if entering {
-		//writeNewLine(w)
+		writeNewLine(w)
 		//writeRowBytes(w, []byte("LISTITEM\\_NEW\\_LINE\\_ENTER"))
 
 		if n.HasBlankPreviousLines() {
@@ -186,12 +186,13 @@ func (r *Renderer) listItem(w util.BufWriter, source []byte, node ast.Node, ente
 			}
 		}
 		writeRowBytes(w, []byte{SpaceChar.Byte()})
-	} else {
-		writeNewLine(w)
-		writeRowBytes(w, []byte(n.Parent().Kind().String()))
-		writeRowBytes(w, []byte(n.Parent().Parent().Kind().String()))
-		//writeRowBytes(w, []byte("LISTITEM\\_NEW\\_LINE\\_EXIT"))
 	}
+	//else {
+	//	writeNewLine(w)
+	//	writeRowBytes(w, []byte(n.Parent().Kind().String()))
+	//	writeRowBytes(w, []byte(n.Parent().Parent().Kind().String()))
+	//	//writeRowBytes(w, []byte("LISTITEM\\_NEW\\_LINE\\_EXIT"))
+	//}
 
 	return ast.WalkContinue, nil
 }
