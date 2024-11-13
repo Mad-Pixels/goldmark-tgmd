@@ -61,7 +61,7 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 	n := node.(*ast.Heading)
 	if entering {
 		if n.Level > 1 && n.Level < 4 {
-			writeRowBytes(w, []byte("HEADING_NEW_LINE"))
+			writeRowBytes(w, []byte("HEADING\\_NEW\\_LINE"))
 			writeNewLine(w)
 		}
 		Config.headings[n.Level-1].writeStart(w)
@@ -75,13 +75,14 @@ func (r *Renderer) paragraph(w util.BufWriter, _ []byte, node ast.Node, entering
 	ast.WalkStatus, error,
 ) {
 	n := node.(*ast.Paragraph)
+
 	if entering {
 		if n.Parent().Kind().String() != ast.KindBlockquote.String() {
-			writeRowBytes(w, []byte("PARAGRAPH_NEW_LINE_ENTER"))
+			writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_ENTER"))
 			writeNewLine(w)
 		}
 	} else {
-		writeRowBytes(w, []byte("PARAGRAPH_NEW_LINE_EXIT"))
+		writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_EXIT"))
 		writeNewLine(w)
 	}
 	return ast.WalkContinue, nil
@@ -106,7 +107,7 @@ func (r *Renderer) list(w util.BufWriter, source []byte, node ast.Node, entering
 			//fmt.Println("XXXXXXXXXXXXXXXXXXXXXX")
 			//fmt.Println(string(parentContent))
 			//fmt.Println("XXXXXXXXXXXXXXXXXXXXXX")
-			writeRowBytes(w, []byte("LIST_NEW_LINE"))
+			writeRowBytes(w, []byte("LIST\\_NEW\\_LINE"))
 			writeNewLine(w)
 		}
 	}
@@ -119,7 +120,7 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 ) {
 	n := node.(*ast.ListItem)
 	if entering {
-		writeRowBytes(w, []byte("LISTITEM_NEW_LINE"))
+		writeRowBytes(w, []byte("LISTITEM\\_NEW\\_LINE"))
 		writeNewLine(w)
 		if n.Parent().Parent().Kind().String() == ast.KindDocument.String() {
 			writeRowBytes(w, []byte{SpaceChar.Byte(), SpaceChar.Byte()})
@@ -159,16 +160,16 @@ func (r *Renderer) code(w util.BufWriter, source []byte, node ast.Node, entering
 	)
 	nn := node.(*ast.FencedCodeBlock)
 	if entering {
-		writeRowBytes(w, []byte("CODE_NEW_LINE_ENTER"))
+		writeRowBytes(w, []byte("CODE\\_NEW\\_LINE\\_ENTER"))
 		writeNewLine(w)
 		writeWrapperArr(w.Write(CodeTg.Bytes()))
 		writeWrapperArr(w.Write(nn.Language(source)))
 	} else {
-		writeRowBytes(w, []byte("CODE_NEW_LINE_EXIT_1"))
+		writeRowBytes(w, []byte("CODE\\_NEW\\_LINE\\_EXIT\\_1"))
 		writeNewLine(w)
 		writeWrapperArr(w.Write(content))
 		writeWrapperArr(w.Write(CodeTg.Bytes()))
-		writeRowBytes(w, []byte("CODE_NEW_LINE_EXIT_2"))
+		writeRowBytes(w, []byte("CODE\\_NEW\\_LINE\\_EXIT\\_2"))
 		writeNewLine(w)
 	}
 	return ast.WalkContinue, nil
@@ -231,7 +232,7 @@ func (r *Renderer) blockquote(w util.BufWriter, _ []byte, _ ast.Node, entering b
 	ast.WalkStatus, error,
 ) {
 	if entering {
-		writeRowBytes(w, []byte("BLOCKQUOTE_NEW_LINE"))
+		writeRowBytes(w, []byte("BLOCKQUOTE\\_NEW\\_LINE"))
 		writeNewLine(w)
 		writeRowBytes(w, []byte{GreaterThanChar.Byte()})
 	}
