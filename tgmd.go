@@ -120,7 +120,7 @@ func (r *Renderer) list(w util.BufWriter, source []byte, node ast.Node, entering
 	n := node.(*ast.List)
 
 	if entering {
-		if n.Parent().Kind() == ast.KindList && !node.HasBlankPreviousLines() {
+		if n.Parent().Kind() == ast.KindList || node.HasBlankPreviousLines() {
 			writeNewLine(w)
 		}
 	}
