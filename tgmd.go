@@ -91,7 +91,7 @@ func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, ent
 	//}
 
 	if entering {
-		writeRowBytes(w, []byte{SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte()})
+		writeRowBytes(w, SpaceChar.Bytes(4))
 	} else {
 		writeNewLine(w)
 	}
@@ -102,26 +102,26 @@ func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, ent
 func (r *Renderer) list(w util.BufWriter, source []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
-	n := node.(*ast.List)
-	if !entering {
-		parent := n.Parent()
-
-		if parent.Kind().String() == ast.KindDocument.String() {
-			//parentContent := []rune(string(parent.Text(source)))
-			//
-			//for _, bullet := range Config.listBullets {
-			//	if len(parentContent) == 1 && parentContent[0] == bullet {
-			//
-			//		return ast.WalkContinue, nil
-			//	}
-			//}
-			//fmt.Println("XXXXXXXXXXXXXXXXXXXXXX")
-			//fmt.Println(string(parentContent))
-			//fmt.Println("XXXXXXXXXXXXXXXXXXXXXX")
-			//writeRowBytes(w, []byte("LIST\\_NEW\\_LINE"))
-			writeNewLine(w)
-		}
-	}
+	//n := node.(*ast.List)
+	//if !entering {
+	//	parent := n.Parent()
+	//
+	//	if parent.Kind().String() == ast.KindDocument.String() {
+	//		//parentContent := []rune(string(parent.Text(source)))
+	//		//
+	//		//for _, bullet := range Config.listBullets {
+	//		//	if len(parentContent) == 1 && parentContent[0] == bullet {
+	//		//
+	//		//		return ast.WalkContinue, nil
+	//		//	}
+	//		//}
+	//		//fmt.Println("XXXXXXXXXXXXXXXXXXXXXX")
+	//		//fmt.Println(string(parentContent))
+	//		//fmt.Println("XXXXXXXXXXXXXXXXXXXXXX")
+	//		//writeRowBytes(w, []byte("LIST\\_NEW\\_LINE"))
+	//		writeNewLine(w)
+	//	}
+	//}
 
 	return ast.WalkContinue, nil
 }
@@ -132,17 +132,17 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 	n := node.(*ast.ListItem)
 	if entering {
 		//writeRowBytes(w, []byte("LISTITEM\\_NEW\\_LINE"))
-		writeNewLine(w)
+		//writeNewLine(w)
 		if n.Parent().Parent().Kind().String() == ast.KindDocument.String() {
-			writeRowBytes(w, []byte{SpaceChar.Byte(), SpaceChar.Byte()})
+			writeRowBytes(w, SpaceChar.Bytes(4))
 			writeRune(w, Config.listBullets[0])
 		} else {
 			if n.Parent().Parent().Parent().Parent() != nil {
 				if n.Parent().Parent().Parent().Parent().Kind().String() == ast.KindListItem.String() {
-					writeRowBytes(w, []byte{SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte()})
+					writeRowBytes(w, SpaceChar.Bytes(8))
 					writeRune(w, Config.listBullets[2])
 				} else {
-					writeRowBytes(w, []byte{SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte()})
+					writeRowBytes(w, SpaceChar.Bytes(8))
 					writeRune(w, Config.listBullets[1])
 				}
 			}

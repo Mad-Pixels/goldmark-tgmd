@@ -21,6 +21,16 @@ func (sc SpecialChar) Byte() byte {
 	return byte(sc)
 }
 
+func (sc SpecialChar) Bytes(num int) []byte {
+	bytes := make([]byte, num)
+
+	for i := 0; i < num; i++ {
+		bytes = append(bytes, byte(sc))
+	}
+
+	return bytes
+}
+
 // Escaped return SpecialChar as escaped byte char.
 func (sc SpecialChar) Escaped() []byte {
 	return append([]byte{SlashChar.Byte()}, sc.Byte())
