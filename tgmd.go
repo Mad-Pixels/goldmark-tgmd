@@ -2,7 +2,6 @@ package tgmd
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	ext "github.com/yuin/goldmark/extension/ast"
@@ -61,13 +60,15 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 ) {
 	n := node.(*ast.Heading)
 	if entering {
-		if n.Level > 1 && n.Level < 4 {
-			writeRowBytes(w, []byte("HEADING\\_NEW\\_LINE"))
-			writeNewLine(w)
-		}
+		//if n.Level > 1 && n.Level < 4 {
+		//	writeRowBytes(w, []byte("HEADING\\_NEW\\_LINE\\_ENTER"))
+		//	writeNewLine(w)
+		//}
 		Config.headings[n.Level-1].writeStart(w)
 	} else {
 		Config.headings[n.Level-1].writeEnd(w)
+		//writeRowBytes(w, []byte("HEADING\\_NEW\\_LINE\\_EXIT"))
+		writeNewLine(w)
 	}
 	return ast.WalkContinue, nil
 }
@@ -75,22 +76,16 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
-	n := node.(*ast.Paragraph)
+	//n := node.(*ast.Paragraph)
 
-	parent := n.PreviousSibling()
 	if entering {
-		if parent != nil {
-			parentContent := []rune(string(parent.Text(source)))
-			fmt.Println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZz")
-			fmt.Println(string(parentContent))
-			fmt.Println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZz")
-		}
-		if n.Parent().Kind().String() != ast.KindBlockquote.String() {
-			writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_ENTER"))
-			writeNewLine(w)
-		}
+		//if n.Parent().Kind().String() != ast.KindBlockquote.String() {
+		//	n.Parent().OwnerDocument()
+		//	writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_ENTER"))
+		//	writeNewLine(w)
+		//}
 	} else {
-		writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_EXIT"))
+		//writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_EXIT"))
 		writeNewLine(w)
 	}
 	return ast.WalkContinue, nil
@@ -115,7 +110,7 @@ func (r *Renderer) list(w util.BufWriter, source []byte, node ast.Node, entering
 			//fmt.Println("XXXXXXXXXXXXXXXXXXXXXX")
 			//fmt.Println(string(parentContent))
 			//fmt.Println("XXXXXXXXXXXXXXXXXXXXXX")
-			writeRowBytes(w, []byte("LIST\\_NEW\\_LINE"))
+			//writeRowBytes(w, []byte("LIST\\_NEW\\_LINE"))
 			writeNewLine(w)
 		}
 	}
@@ -128,7 +123,7 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 ) {
 	n := node.(*ast.ListItem)
 	if entering {
-		writeRowBytes(w, []byte("LISTITEM\\_NEW\\_LINE"))
+		//writeRowBytes(w, []byte("LISTITEM\\_NEW\\_LINE"))
 		writeNewLine(w)
 		if n.Parent().Parent().Kind().String() == ast.KindDocument.String() {
 			writeRowBytes(w, []byte{SpaceChar.Byte(), SpaceChar.Byte()})
@@ -168,16 +163,16 @@ func (r *Renderer) code(w util.BufWriter, source []byte, node ast.Node, entering
 	)
 	nn := node.(*ast.FencedCodeBlock)
 	if entering {
-		writeRowBytes(w, []byte("CODE\\_NEW\\_LINE\\_ENTER"))
+		//writeRowBytes(w, []byte("CODE\\_NEW\\_LINE\\_ENTER"))
 		writeNewLine(w)
 		writeWrapperArr(w.Write(CodeTg.Bytes()))
 		writeWrapperArr(w.Write(nn.Language(source)))
 	} else {
-		writeRowBytes(w, []byte("CODE\\_NEW\\_LINE\\_EXIT\\_1"))
+		//writeRowBytes(w, []byte("CODE\\_NEW\\_LINE\\_EXIT\\_1"))
 		writeNewLine(w)
 		writeWrapperArr(w.Write(content))
 		writeWrapperArr(w.Write(CodeTg.Bytes()))
-		writeRowBytes(w, []byte("CODE\\_NEW\\_LINE\\_EXIT\\_2"))
+		//writeRowBytes(w, []byte("CODE\\_NEW\\_LINE\\_EXIT\\_2"))
 		writeNewLine(w)
 	}
 	return ast.WalkContinue, nil
@@ -240,7 +235,7 @@ func (r *Renderer) blockquote(w util.BufWriter, _ []byte, _ ast.Node, entering b
 	ast.WalkStatus, error,
 ) {
 	if entering {
-		writeRowBytes(w, []byte("BLOCKQUOTE\\_NEW\\_LINE"))
+		//writeRowBytes(w, []byte("BLOCKQUOTE\\_NEW\\_LINE"))
 		writeNewLine(w)
 		writeRowBytes(w, []byte{GreaterThanChar.Byte()})
 	}
