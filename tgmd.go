@@ -64,7 +64,7 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 		//	writeRowBytes(w, []byte("HEADING\\_NEW\\_LINE\\_ENTER"))
 		//
 		//}
-		if node.HasBlankPreviousLines() {
+		if n.HasBlankPreviousLines() {
 			writeNewLine(w)
 		}
 
@@ -72,7 +72,7 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 	} else {
 		Config.headings[n.Level-1].writeEnd(w)
 		//writeRowBytes(w, []byte("HEADING\\_NEW\\_LINE\\_EXIT"))
-		writeNewLine(w)
+		//writeNewLine(w)
 	}
 	return ast.WalkContinue, nil
 }
@@ -87,7 +87,7 @@ func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, ent
 			return ast.WalkContinue, nil
 		}
 
-		if !node.HasBlankPreviousLines() {
+		if n.HasBlankPreviousLines() {
 			writeNewLine(w)
 		}
 		//writeRowBytes(w, []byte("Enter"))
@@ -153,7 +153,9 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 ) {
 	n := node.(*ast.ListItem)
 	if entering {
-		writeNewLine(w)
+		if n.HasBlankPreviousLines() {
+			writeNewLine(w)
+		}
 
 		//if !node.HasBlankPreviousLines() {
 		//	writeNewLine(w)
@@ -181,10 +183,9 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 			}
 		}
 		writeRowBytes(w, []byte{SpaceChar.Byte()})
+	} else {
+		writeNewLine(w)
 	}
-	//else {
-	//	writeNewLine(w)
-	//}
 
 	return ast.WalkContinue, nil
 }
