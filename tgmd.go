@@ -77,7 +77,7 @@ func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, ent
 ) {
 	n := node.(*ast.Paragraph)
 
-	parent := n.Parent()
+	parent := n.PreviousSibling()
 	if entering {
 		parentContent := []rune(string(parent.Text(source)))
 		fmt.Println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZz")
