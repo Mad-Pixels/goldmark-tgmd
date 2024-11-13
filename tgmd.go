@@ -2,6 +2,7 @@ package tgmd
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	ext "github.com/yuin/goldmark/extension/ast"
@@ -71,12 +72,17 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 	return ast.WalkContinue, nil
 }
 
-func (r *Renderer) paragraph(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
+func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
 	n := node.(*ast.Paragraph)
 
+	parent := n.Parent()
 	if entering {
+		parentContent := []rune(string(parent.Text(source)))
+		fmt.Println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZz")
+		fmt.Println(string(parentContent))
+		fmt.Println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZz")
 		if n.Parent().Kind().String() != ast.KindBlockquote.String() {
 			writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_ENTER"))
 			writeNewLine(w)
