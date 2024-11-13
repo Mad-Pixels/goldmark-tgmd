@@ -64,7 +64,7 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 		//	writeRowBytes(w, []byte("HEADING\\_NEW\\_LINE\\_ENTER"))
 		//
 		//}
-		if !node.HasBlankPreviousLines() {
+		if node.HasBlankPreviousLines() {
 			writeNewLine(w)
 		}
 
