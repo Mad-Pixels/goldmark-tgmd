@@ -188,6 +188,8 @@ func (r *Renderer) listItem(w util.BufWriter, source []byte, node ast.Node, ente
 		writeRowBytes(w, []byte{SpaceChar.Byte()})
 	} else {
 		writeNewLine(w)
+		writeRowBytes(w, []byte(n.Parent().Kind().String()))
+		writeRowBytes(w, []byte(n.Parent().Parent().Kind().String()))
 		//writeRowBytes(w, []byte("LISTITEM\\_NEW\\_LINE\\_EXIT"))
 	}
 
