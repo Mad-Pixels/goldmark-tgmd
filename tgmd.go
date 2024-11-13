@@ -101,7 +101,7 @@ func (r *Renderer) list(w util.BufWriter, source []byte, node ast.Node, entering
 				}
 			}
 			fmt.Println("XXXXXXXXXXXXXXXXXXXXXX")
-			fmt.Println(parentContent)
+			fmt.Println(string(parentContent))
 			fmt.Println("XXXXXXXXXXXXXXXXXXXXXX")
 			writeRowBytes(w, []byte("test"))
 			writeNewLine(w)
@@ -224,6 +224,7 @@ func (r *Renderer) blockquote(w util.BufWriter, _ []byte, _ ast.Node, entering b
 	ast.WalkStatus, error,
 ) {
 	if entering {
+		fmt.Println("BLOCKQUOTE")
 		writeNewLine(w)
 		writeRowBytes(w, []byte{GreaterThanChar.Byte()})
 	}
