@@ -79,10 +79,12 @@ func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, ent
 
 	parent := n.PreviousSibling()
 	if entering {
-		parentContent := []rune(string(parent.Text(source)))
-		fmt.Println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZz")
-		fmt.Println(string(parentContent))
-		fmt.Println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZz")
+		if parent != nil {
+			parentContent := []rune(string(parent.Text(source)))
+			fmt.Println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZz")
+			fmt.Println(string(parentContent))
+			fmt.Println("ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZz")
+		}
 		if n.Parent().Kind().String() != ast.KindBlockquote.String() {
 			writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_ENTER"))
 			writeNewLine(w)
