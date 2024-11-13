@@ -64,7 +64,10 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 		//	writeRowBytes(w, []byte("HEADING\\_NEW\\_LINE\\_ENTER"))
 		//
 		//}
-		writeNewLine(w)
+		if !node.HasBlankPreviousLines() {
+			writeNewLine(w)
+		}
+
 		Config.headings[n.Level-1].writeStart(w)
 	} else {
 		Config.headings[n.Level-1].writeEnd(w)
@@ -82,8 +85,8 @@ func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, ent
 	if entering {
 		writeRowBytes(w, []byte("Enter"))
 		writeRowBytes(w, []byte(n.Parent().Kind().String()))
-		writeRowBytes(w, []byte(n.PreviousSibling().Kind().String()))
-		writeRowBytes(w, []byte(n.NextSibling().Kind().String()))
+		//writeRowBytes(w, []byte(n.PreviousSibling().Kind().String()))
+		//writeRowBytes(w, []byte(n.NextSibling().Kind().String()))
 
 		//	//if n.Parent().Kind().String() != ast.KindBlockquote.String() {
 		//	//	n.Parent().OwnerDocument()
@@ -136,6 +139,8 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 ) {
 	n := node.(*ast.ListItem)
 	if entering {
+		writeRowBytes(w, []byte("Enter"))
+		writeRowBytes(w, []byte(n.Parent().Kind().String()))
 		//writeRowBytes(w, []byte("LISTITEM\\_NEW\\_LINE"))
 		//if n.Parent().Kind() == ast.KindListItem {
 		//	writeNewLine(w)
