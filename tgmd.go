@@ -80,7 +80,7 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
-	//n := node.(*ast.Paragraph)
+	n := node.(*ast.Paragraph)
 
 	if entering {
 		//if n.Parent().Kind() != ast.KindListItem {
@@ -89,7 +89,7 @@ func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, ent
 		//
 		//if n.HasBlankPreviousLines() {
 		//	writeNewLine(w)
-		//	writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_ENTER"))
+		//	//writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_ENTER"))
 		//}
 		//writeRowBytes(w, []byte("Enter"))
 		//writeRowBytes(w, []byte(n.Parent().Kind().String()))
@@ -101,9 +101,16 @@ func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, ent
 		//	//	writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_ENTER"))
 		//	//	writeNewLine(w)
 		//	//}
+		if n.Parent().Kind() == ast.KindDocument {
+			writeNewLine(w)
+			if n.HasBlankPreviousLines() {
+				writeNewLine(w)
+			}
+		}
+
 	} else {
 		//	//writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_EXIT"))
-		writeNewLine(w)
+		//writeNewLine(w)
 		//writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_EXIT"))
 	}
 
@@ -119,14 +126,14 @@ func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, ent
 func (r *Renderer) list(w util.BufWriter, source []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
-	n := node.(*ast.List)
+	//n := node.(*ast.List)
 
-	if entering {
-		if n.HasBlankPreviousLines() {
-			writeNewLine(w)
-			//writeRowBytes(w, []byte("LIST\\_NEW\\_LINE\\_ENTER"))
-		}
-	}
+	//if entering {
+	//	if n.HasBlankPreviousLines() {
+	//		writeNewLine(w)
+	//		//writeRowBytes(w, []byte("LIST\\_NEW\\_LINE\\_ENTER"))
+	//	}
+	//}
 
 	//if !entering {
 	//	parent := n.Parent()
@@ -218,6 +225,9 @@ func (r *Renderer) code(w util.BufWriter, source []byte, node ast.Node, entering
 	if entering {
 		//writeRowBytes(w, []byte("CODE\\_NEW\\_LINE\\_ENTER"))
 		writeNewLine(w)
+		if node.HasBlankPreviousLines() {
+			writeNewLine(w)
+		}
 		writeWrapperArr(w.Write(CodeTg.Bytes()))
 		writeWrapperArr(w.Write(nn.Language(source)))
 	} else {
