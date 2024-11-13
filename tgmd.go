@@ -77,18 +77,23 @@ func (r *Renderer) heading(w util.BufWriter, _ []byte, node ast.Node, entering b
 func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
-	//n := node.(*ast.Paragraph)
+	n := node.(*ast.Paragraph)
 
-	//if entering {
-	//	//if n.Parent().Kind().String() != ast.KindBlockquote.String() {
-	//	//	n.Parent().OwnerDocument()
-	//	//	writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_ENTER"))
-	//	//	writeNewLine(w)
-	//	//}
-	//} else {
-	//	//writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_EXIT"))
-	//	writeNewLine(w)
-	//}
+	if entering {
+		writeRowBytes(w, []byte("Enter"))
+		writeRowBytes(w, []byte(n.Parent().Kind().String()))
+		writeRowBytes(w, []byte(n.PreviousSibling().Kind().String()))
+		writeRowBytes(w, []byte(n.NextSibling().Kind().String()))
+
+		//	//if n.Parent().Kind().String() != ast.KindBlockquote.String() {
+		//	//	n.Parent().OwnerDocument()
+		//	//	writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_ENTER"))
+		//	//	writeNewLine(w)
+		//	//}
+	} else {
+		//	//writeRowBytes(w, []byte("PARAGRAPH\\_NEW\\_LINE\\_EXIT"))
+		//	writeNewLine(w)
+	}
 
 	if entering {
 		writeRowBytes(w, SpaceChar.Bytes(4))
