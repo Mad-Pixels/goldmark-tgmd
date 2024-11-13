@@ -183,17 +183,10 @@ func (r *Renderer) listItem(w util.BufWriter, source []byte, node ast.Node, ente
 			}
 		}
 		writeRowBytes(w, []byte{SpaceChar.Byte()})
-	} else {
-		content := []rune(string(n.Text(source)))
-
-		for _, bullet := range Config.listBullets {
-			if len(content) == 1 && content[0] == bullet {
-				return ast.WalkContinue, nil
-			}
-		}
-
-		writeNewLine(w)
 	}
+	//else {
+	//	writeNewLine(w)
+	//}
 
 	return ast.WalkContinue, nil
 }
