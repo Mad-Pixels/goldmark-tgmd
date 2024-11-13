@@ -148,7 +148,7 @@ func (r *Renderer) list(w util.BufWriter, source []byte, node ast.Node, entering
 	return ast.WalkContinue, nil
 }
 
-func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering bool) (
+func (r *Renderer) listItem(w util.BufWriter, source []byte, node ast.Node, entering bool) (
 	ast.WalkStatus, error,
 ) {
 	n := node.(*ast.ListItem)
@@ -184,6 +184,14 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 		}
 		writeRowBytes(w, []byte{SpaceChar.Byte()})
 	} else {
+		content := []rune(string(n.Text(source)))
+
+		for _, bullet := range Config.listBullets {
+			if len(content) == 1 && content[0] == bullet {
+				return ast.WalkContinue, nil
+			}
+		}
+
 		writeNewLine(w)
 	}
 
