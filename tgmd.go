@@ -175,9 +175,10 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 			}
 		}
 		writeRowBytes(w, []byte{SpaceChar.Byte()})
-	} else {
-		writeNewLine(w)
 	}
+	//else {
+	//	writeNewLine(w)
+	//}
 
 	return ast.WalkContinue, nil
 }
