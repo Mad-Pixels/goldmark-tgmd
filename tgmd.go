@@ -90,7 +90,9 @@ func (r *Renderer) paragraph(w util.BufWriter, source []byte, node ast.Node, ent
 	//	writeNewLine(w)
 	//}
 
-	if !entering {
+	if entering {
+		writeRowBytes(w, []byte{SpaceChar.Byte(), SpaceChar.Byte(), SpaceChar.Byte()})
+	} else {
 		writeNewLine(w)
 	}
 
