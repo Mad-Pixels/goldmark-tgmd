@@ -112,6 +112,7 @@ func (r *Renderer) listItem(w util.BufWriter, _ []byte, node ast.Node, entering 
 ) {
 	n := node.(*ast.ListItem)
 	if entering {
+		writeRowBytes(w, []byte("test"))
 		writeNewLine(w)
 		if n.Parent().Parent().Kind().String() == ast.KindDocument.String() {
 			writeRowBytes(w, []byte{SpaceChar.Byte(), SpaceChar.Byte()})
