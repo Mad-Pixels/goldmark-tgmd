@@ -1,4 +1,15 @@
+<picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/Mad-Pixels/.github/raw/main/profile/banner.png">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/Mad-Pixels/.github/raw/main/profile/banner.png">
+    <img
+        alt="MadPixels"
+        src="https://github.com/Mad-Pixels/.github/raw/main/profile/banner.png">
+</picture>
+
 # goldmark-tgmd ✨
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Go](https://img.shields.io/badge/Go-1.19-blue.svg)](https://golang.org)
 
 goldmark-tgmd is an extension for the goldmark Markdown parser 
 that adds support for Telegram-specific Markdown features 🚀. 
@@ -46,10 +57,8 @@ func main() {
 
 You can try [example](./example)
 
-### Contributing 🤝
-Contributions are welcome! Feel free to open issues for bugs 🐛, 
-feature requests 🌈, or submit pull requests 💡. 
+# Contributing
+We're open to any new ideas and contributions. We also have some rules and taboos here, so please read this page and our [Code of Conduct](/CODE_OF_CONDUCT.md) carefully.
 
-Acknowledgments 💖
-- Thanks to the [goldmark](https://github.com/yuin/goldmark) project for providing a robust and extensible Markdown parser.
-- This project is inspired by the formatting options available in Telegram.
+## I want to report an issue
+If you've found an issue and want to report it, please check our [Issues](https://github.com/Mad-Pixels/goldmark-tgmd/issues) page.
